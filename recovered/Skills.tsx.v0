@@ -1,0 +1,83 @@
+import React from "react";
+
+const skillCategories = [
+  {
+    title: "Languages",
+    skills: ["Python", "C++", "Java", "SQL", "JavaScript"],
+  },
+  {
+    title: "AI / ML",
+    skills: ["Machine Learning", "Deep Learning", "Pandas", "NumPy", "Scikit-learn"],
+  },
+  {
+    title: "Quant & Data",
+    skills: ["Statistics", "Probability", "Financial Markets", "Time Series", "Backtesting"],
+  },
+  {
+    title: "Engineering",
+    skills: ["React", "Git", "GitHub", "APIs", "Databases"],
+  },
+  {
+    title: "Core CS",
+    skills: ["DSA", "OOP", "DBMS", "OS", "Computer Networks"],
+  },
+];
+
+export default function Skills() {
+  return (
+    <section id="skills" className="py-32 relative border-t border-[#14211a]">
+      {/* Section Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div>
+          <div className="flex items-center gap-4 mb-6">
+            <span className="font-mono text-[10px] tracking-widest text-[#656d4a]">03</span>
+            <span className="w-12 h-[1px] bg-[#3c5d48]"></span>
+          </div>
+          <h2 className="font-serif text-4xl md:text-5xl text-[#f0f2eb]">
+            Technical Index
+          </h2>
+        </div>
+        
+        {/* Subtle grid decoration */}
+        <div className="hidden md:flex gap-1 opacity-20">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="w-1 h-1 bg-[#b5a642]" />
+          ))}
+        </div>
+      </div>
+
+      {/* 5-Column Index */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-4">
+        {skillCategories.map((category, idx) => (
+          <div key={category.title} className="flex flex-col">
+            <div className="border-b border-[#2c4435] pb-3 mb-4">
+              <span className="font-mono text-[10px] text-[#656d4a] block mb-1">
+                03.{idx + 1}
+              </span>
+              <h3 className="font-sans text-sm tracking-widest uppercase text-[#a3b18a]">
+                {category.title}
+              </h3>
+            </div>
+            
+            <ul className="flex flex-col gap-3">
+              {category.skills.map((skill) => (
+                <li key={skill} className="flex items-center gap-2 group">
+                  <span className="w-1 h-1 bg-[#3c5d48] rounded-full group-hover:bg-[#10b981] transition-colors" />
+                  <span className="text-sm font-light text-[#8a998b] group-hover:text-[#f0f2eb] transition-colors">
+                    {skill}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      
+      {/* Subtle bottom measurement line */}
+      <div className="w-full mt-24 flex items-center justify-between border-t border-[#14211a] pt-4 opacity-30">
+        <span className="font-mono text-[8px] tracking-widest text-[#656d4a]">0.00</span>
+        <span className="font-mono text-[8px] tracking-widest text-[#656d4a]">1.00</span>
+      </div>
+    </section>
+  );
+}

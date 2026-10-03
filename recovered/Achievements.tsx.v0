@@ -1,0 +1,138 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+
+interface LeetCodeStats {
+  totalSolved: number;
+  ranking: number;
+}
+
+export default function Achievements() {
+  const [lcStats, setLcStats] = useState<LeetCodeStats | null>(null);
+  const [ghRepos, setGhRepos] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Fetch LeetCode
+    fetch("https://leetcode-stats-api.herokuapp.com/aviralsinghai")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status !== "error") {
+          setLcStats({ totalSolved: data.totalSolved, ranking: data.ranking });
+        }
+      })
+      .catch(() => {});
+
+    // Fetch GitHub
+    fetch("https://api.github.com/users/Aviral2406")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.public_repos) {
+          setGhRepos(data.public_repos);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const formatNum = (num: number) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  const ledgerItems = [
+    {
+      year: "2024 - Present",
+      category: "Education",
+      title: "Medicaps University",
+      detail: "B.Tech in Computer Science and Engineering",
+    },
+    {
+      year: "2024",
+      category: "Certification",
+      title: "Data Science & Machine Learning",
+      detail: "Completed comprehensive coursework focusing on predictive modeling and data analysis.",
+    },
+    {
+      year: "2023",
+      category: "Education",
+      title: "St. Arnold's Higher Secondary School",
+      detail: "Class XII (CBSE) - 78%",
+    },
+    {
+      year: "2021",
+      category: "Education",
+      title: "St. Arnold's Higher Secondary School",
+      detail: "Class X (CBSE) - 86%",
+    }
+  ];
+
+  return (
+    <section id="achievements" className="py-32 relative border-t border-[#14211a]">
+      <div className="flex items-center gap-4 mb-20">
+        <span className="font-mono text-[10px] tracking-widest text-[#656d4a]">05</span>
+        <span className="w-12 h-[1px] bg-[#3c5d48]"></span>
+        <h2 className="font-serif text-4xl md:text-5xl text-[#f0f2eb]">Ledger</h2>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        {/* Left: Timeline Ledger */}
+        <div className="lg:col-span-8 flex flex-col">
+          {ledgerItems.map((item, idx) => (
+            <div key={idx} className="grid grid-cols-1 md:grid-cols-4 gap-4 py-8 border-b border-[#14211a] group hover:bg-[#0d1611]/50 transition-colors px-4 -mx-4">
+              <div className="font-mono text-[10px] tracking-widest text-[#656d4a] md:pt-1">
+                {item.year}
+              </div>
+              <div className="md:col-span-3">
+                <span className="font-mono text-[8px] tracking-widest uppercase text-[#3c5d48] block mb-2">
+                  {item.category}
+                </span>
+                <h4 className="font-serif text-xl text-[#f0f2eb] mb-2">{item.title}</h4>
+                <p className="text-sm font-light text-[#8a998b]">{item.detail}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Right: Live Metrics */}
+        <div className="lg:col-span-4 flex flex-col gap-8">
+          <div className="border border-[#14211a] p-6 bg-grain relative overflow-hidden">
+            <h3 className="font-sans text-sm tracking-widest uppercase text-[#a3b18a] mb-8 border-b border-[#14211a] pb-4">
+              Live Technical Metrics
+            </h3>
+            
+            <div className="space-y-8">
+              {/* LeetCode */}
+              {lcStats && (
+                <div>
+                  <span className="font-mono text-[10px] tracking-widest text-[#656d4a] block mb-2 uppercase">LeetCode</span>
+                  <div className="flex justify-between items-end mb-1">
+                    <span className="text-[#f0f2eb] font-serif text-2xl">{lcStats.totalSolved}</span>
+                    <span className="font-mono text-[8px] text-[#3c5d48] uppercase">Problems Solved</span>
+                  </div>
+                  <div className="flex justify-between items-end">
+                    <span className="text-[#8a998b] font-serif text-lg">{formatNum(lcStats.ranking)}</span>
+                    <span className="font-mono text-[8px] text-[#3c5d48] uppercase">Global Rank</span>
+                  </div>
+                </div>
+              )}
+
+              {/* GitHub */}
+              {ghRepos !== null && (
+                <div>
+                  <span className="font-mono text-[10px] tracking-widest text-[#656d4a] block mb-2 uppercase">GitHub</span>
+                  <div className="flex justify-between items-end">
+                    <span className="text-[#f0f2eb] font-serif text-2xl">{ghRepos}</span>
+                    <span className="font-mono text-[8px] text-[#3c5d48] uppercase">Public Repositories</span>
+                  </div>
+                </div>
+              )}
+
+              {!lcStats && ghRepos === null && (
+                <div className="animate-pulse flex flex-col gap-4">
+                  <div className="h-4 bg-[#14211a] w-1/2"></div>
+                  <div className="h-8 bg-[#14211a] w-3/4"></div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

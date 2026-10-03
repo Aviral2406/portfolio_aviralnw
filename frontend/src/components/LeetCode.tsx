@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import GlassCard from "./GlassCard";
 
 interface LeetCodeStats {
@@ -14,32 +14,60 @@ interface LeetCodeStats {
   hardSolved: number;
   hardTotal: number;
   ranking: number;
-  recentTopics: string[];
 }
 
 export default function LeetCode() {
-  const stats: LeetCodeStats = {
-    username: "aviralsinghai",
-    totalSolved: 324,
-    totalQuestions: 3100,
-    easySolved: 112,
-    easyTotal: 800,
-    mediumSolved: 178,
-    mediumTotal: 1600,
-    hardSolved: 34,
-    hardTotal: 700,
-    ranking: 145000,
-    recentTopics: [
-      "Dynamic Programming",
-      "Binary Search",
-      "Depth-First Search",
-      "Sliding Window",
-      "Graph Algorithms",
-      "Two Pointers",
-    ],
-  };
+  const [stats, setStats] = useState<LeetCodeStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  const overallPercentage = Math.round((stats.totalSolved / stats.totalQuestions) * 100);
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("https://leetcode-stats-api.herokuapp.com/aviralsinghai");
+        const data = await res.json();
+        
+        if (data.status === "error") {
+          throw new Error("Failed to fetch LeetCode stats");
+        }
+
+        setStats({
+          username: "aviralsinghai",
+          totalSolved: data.totalSolved,
+          totalQuestions: data.totalQuestions,
+          easySolved: data.easySolved,
+          easyTotal: data.totalEasy,
+          mediumSolved: data.mediumSolved,
+          mediumTotal: data.totalMedium,
+          hardSolved: data.hardSolved,
+          hardTotal: data.totalHard,
+          ranking: data.ranking,
+        });
+      } catch (err) {
+        console.warn("LeetCode API error", err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchStats();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="animate-pulse space-y-4">
+        <div className="h-10 bg-slate-100 rounded-2xl w-48" />
+        <div className="h-64 bg-slate-100 rounded-3xl w-full" />
+      </div>
+    );
+  }
+
+  if (error || !stats) {
+    return null;
+  }
+
+  const overallPercentage = Math.round((stats.totalSolved / stats.totalQuestions) * 100) || 0;
   const strokeDashOffset = 220 - (220 * overallPercentage) / 100;
 
   // Formatting helper to avoid locale hydration mismatch on Windows/Browsers
@@ -114,7 +142,7 @@ export default function LeetCode() {
             <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
               <div
                 className="h-full bg-emerald-500 rounded-full"
-                style={{ width: `${(stats.easySolved / stats.easyTotal) * 100}%` }}
+                style={{ width: `${(stats.easySolved / Math.max(1, stats.easyTotal)) * 100}%` }}
               />
             </div>
           </div>
@@ -130,7 +158,7 @@ export default function LeetCode() {
             <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
               <div
                 className="h-full bg-indigo-500 rounded-full"
-                style={{ width: `${(stats.mediumSolved / stats.mediumTotal) * 100}%` }}
+                style={{ width: `${(stats.mediumSolved / Math.max(1, stats.mediumTotal)) * 100}%` }}
               />
             </div>
           </div>
@@ -146,7 +174,7 @@ export default function LeetCode() {
             <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
               <div
                 className="h-full bg-pink-500 rounded-full"
-                style={{ width: `${(stats.hardSolved / stats.hardTotal) * 100}%` }}
+                style={{ width: `${(stats.hardSolved / Math.max(1, stats.hardTotal)) * 100}%` }}
               />
             </div>
           </div>
@@ -162,23 +190,6 @@ export default function LeetCode() {
           >
             VISIT
           </a>
-        </div>
-      </GlassCard>
-
-      {/* Practiced Topics Tag List */}
-      <GlassCard hoverScale={false} className="p-6!">
-        <h4 className="text-[10px] font-light text-slate-400 uppercase tracking-widest mb-4">
-          Frequently Practiced Categories
-        </h4>
-        <div className="flex flex-wrap gap-2">
-          {stats.recentTopics.map((topic) => (
-            <span
-              key={topic}
-              className="text-xs px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200/50 text-slate-600 font-light"
-            >
-              {topic}
-            </span>
-          ))}
         </div>
       </GlassCard>
     </div>

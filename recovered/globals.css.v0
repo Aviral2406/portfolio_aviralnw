@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #080d0a;
+  --color-foreground: #f0f2eb;
+  --font-sans: var(--font-inter), sans-serif;
+  --font-serif: var(--font-playfair), serif;
+  
+  --color-forest-900: #040805;
+  --color-forest-800: #080d0a;
+  --color-forest-700: #0d1611;
+  --color-forest-600: #14211a;
+  
+  --color-moss-500: #2c4435;
+  --color-moss-400: #3c5d48;
+  
+  --color-accent-emerald: #10b981;
+  --color-accent-olive: #656d4a;
+  --color-accent-brass: #b5a642;
+}
+
+:root {
+  --background: #080d0a;
+  --foreground: #f0f2eb;
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+html, body {
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+}
+
+/* Base styling overrides */
+::selection {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #f0f2eb;
+}
+
+/* Hide default scrollbar completely when using Lenis */
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Architectural Lines */
+.border-technical {
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Subtle grain overlay */
+.bg-grain {
+  position: relative;
+}
+.bg-grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.015;
+}
+
+/* Typography styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-playfair), serif;
+}

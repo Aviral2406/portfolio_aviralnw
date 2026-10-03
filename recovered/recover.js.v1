@@ -1,0 +1,27 @@
+const fs = require('fs');
+const readline = require('readline');
+
+const transcriptPath = 'C:\\Users\\avira\\.gemini\\antigravity-ide\\brain\\6877ce96-9b6f-4f13-8931-9130ee99a8e9\\.system_generated\\logs\\transcript.jsonl';
+
+async function processLineByLine() {
+  const fileStream = fs.createReadStream(transcriptPath);
+
+  const rl = readline.createInterface({
+    input: fileStream,
+    crlfDelay: Infinity
+  });
+
+  for await (const line of rl) {
+    try {
+      const step = JSON.parse(line);
+      if (step.tool_calls && step.tool_calls.length > 0) {
+        console.log("Found tool calls:", step.tool_calls.map(tc => tc.tool_name || tc.toolName || tc.name));
+        break;
+      }
+    } catch (e) {
+      // ignore JSON errors
+    }
+  }
+}
+
+processLineByLine();

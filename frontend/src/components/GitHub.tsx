@@ -62,51 +62,8 @@ export default function GitHub() {
         })));
         setError(false);
       } catch (err) {
-        console.warn("GitHub API error. Falling back to mockup.", err);
+        console.warn("GitHub API error.", err);
         setError(true);
-        setUser({
-          login: GITHUB_USERNAME,
-          avatar_url: "",
-          html_url: `https://github.com/${GITHUB_USERNAME}`,
-          bio: "Sophomore Computer Science Student | Future Quant Developer | ML Engineer",
-          public_repos: 18,
-          followers: 42,
-          following: 38,
-        });
-        setRepos([
-          {
-            name: "farm-management-system",
-            description: "Full-stack agriculture workflow platform integrating real-time weather analytics and ML yield prediction.",
-            html_url: `https://github.com/${GITHUB_USERNAME}/farm-management-system`,
-            stargazers_count: 14,
-            forks_count: 3,
-            language: "Next.js",
-          },
-          {
-            name: "stock-market-predictor",
-            description: "Deep learning forecasting pipelines utilizing LSTMs and GRUs for stock market movement predictions.",
-            html_url: `https://github.com/${GITHUB_USERNAME}/stock-market-predictor`,
-            stargazers_count: 8,
-            forks_count: 1,
-            language: "Python",
-          },
-          {
-            name: "portfolio-optimizer",
-            description: "Quantitative finance asset allocation algorithms modeled on Modern Portfolio Theory and Markowitz optimization.",
-            html_url: `https://github.com/${GITHUB_USERNAME}/portfolio-optimizer`,
-            stargazers_count: 5,
-            forks_count: 0,
-            language: "Python",
-          },
-          {
-            name: "neural-network-visualizer",
-            description: "Interactive visual mapping tool representing neural network layer forward/backward passes.",
-            html_url: `https://github.com/${GITHUB_USERNAME}/neural-network-visualizer`,
-            stargazers_count: 6,
-            forks_count: 2,
-            language: "TypeScript",
-          },
-        ]);
       } finally {
         setLoading(false);
       }
@@ -127,6 +84,10 @@ export default function GitHub() {
     );
   }
 
+  if (error || !user) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -137,11 +98,6 @@ export default function GitHub() {
           </svg>
           GitHub Profile
         </h3>
-        {error && (
-          <span className="text-[10px] text-slate-400 font-mono tracking-widest uppercase">
-            Demo Mode
-          </span>
-        )}
       </div>
 
       {user && (

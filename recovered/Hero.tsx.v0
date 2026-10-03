@@ -1,0 +1,80 @@
+import React from "react";
+
+export default function Hero() {
+  return (
+    <section id="hero" className="min-h-screen pt-32 pb-16 flex flex-col justify-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 w-full h-full">
+        {/* Left Side: Content */}
+        <div className="flex flex-col justify-center h-full z-10 space-y-8 max-w-xl">
+          {/* Label */}
+          <div className="flex items-center gap-4">
+            <span className="w-8 h-[1px] bg-[#3c5d48]"></span>
+            <span className="font-mono text-[10px] tracking-widest text-[#656d4a] uppercase">
+              Computer Science · AI/ML
+            </span>
+          </div>
+
+          {/* Heading */}
+          <h1 className="font-serif text-6xl md:text-8xl leading-[0.9] tracking-tight text-[#f0f2eb]">
+            Aviral<br />
+            <span className="text-[#a3b18a] italic">Singhai</span>
+          </h1>
+
+          {/* Supporting Statement */}
+          <p className="text-xl md:text-2xl font-light text-[#f0f2eb]/90 max-w-lg leading-snug">
+            Building intelligent systems through machine learning, algorithms, and quantitative thinking.
+          </p>
+
+          {/* Honest Intro */}
+          <p className="text-sm md:text-base text-[#8a998b] font-light leading-relaxed">
+            I am a Computer Science student with a deep interest in artificial intelligence, quantitative research, and financial markets. My focus is on writing robust software, analyzing complex data, and developing algorithmic solutions to challenging problems.
+          </p>
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap items-center gap-6 pt-4">
+            <a
+              href="#projects"
+              className="group flex items-center gap-2 text-xs tracking-widest uppercase font-sans text-[#080d0a] bg-[#10b981] px-6 py-3 hover:bg-[#34d399] transition-colors"
+            >
+              Explore Work
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </a>
+            <a
+              href="#contact"
+              className="group flex items-center gap-2 text-xs tracking-widest uppercase font-sans text-[#f0f2eb] border-b border-[#3c5d48] pb-1 hover:border-[#10b981] hover:text-[#10b981] transition-colors"
+            >
+              Get In Touch
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </a>
+          </div>
+
+          {/* Social Links */}
+          <div className="flex items-center gap-6 pt-8">
+            <a href="https://github.com/Aviral2406" target="_blank" rel="noopener noreferrer" className="text-xs font-mono tracking-widest text-[#656d4a] hover:text-[#10b981] transition-colors uppercase">
+              GitHub
+            </a>
+            <a href="https://www.linkedin.com/in/aviral-singhai-217b12282/" target="_blank" rel="noopener noreferrer" className="text-xs font-mono tracking-widest text-[#656d4a] hover:text-[#10b981] transition-colors uppercase">
+              LinkedIn
+            </a>
+            <a href="https://leetcode.com/u/aviralsinghai/" target="_blank" rel="noopener noreferrer" className="text-xs font-mono tracking-widest text-[#656d4a] hover:text-[#10b981] transition-colors uppercase">
+              LeetCode
+            </a>
+          </div>
+        </div>
+
+        {/* Right Side: Empty for 3D Sculpture Parallax Room */}
+        <div className="hidden lg:block w-full h-full pointer-events-none" />
+      </div>
+
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-12 left-6 md:left-12 lg:left-24 xl:left-32 flex flex-col items-center gap-4 hidden sm:flex">
+        <span className="font-mono text-[10px] text-[#3c5d48] rotate-90 origin-left tracking-widest whitespace-nowrap">
+          SCROLL
+        </span>
+        <div className="w-[1px] h-16 bg-[#14211a] relative overflow-hidden mt-6">
+          <div className="w-full h-1/2 bg-[#10b981] absolute top-0 animate-[bounce_2s_infinite]" />
+        </div>
+      </div>
+    </section>
+  );
+}

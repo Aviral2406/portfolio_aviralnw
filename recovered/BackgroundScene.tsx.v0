@@ -1,0 +1,130 @@
+"use client";
+
+import { useRef, useLayoutEffect } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Environment, Float, MeshDistortMaterial } from "@react-three/drei";
+import * as THREE from "three";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
+function MineralSculpture() {
+  const groupRef = useRef<THREE.Group>(null);
+  const outerRingRef = useRef<THREE.Mesh>(null);
+  const innerMineralRef = useRef<THREE.Mesh>(null);
+
+  useLayoutEffect(() => {
+    if (!groupRef.current) return;
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: document.body,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1,
+      },
+    });
+
+    // Animate the entire group through sections
+    // Hero to About
+    tl.to(groupRef.current.position, { x: 2, y: -1, z: -2, ease: "none" }, 0)
+      .to(groupRef.current.rotation, { x: 0.5, y: 1.5, ease: "none" }, 0)
+    // About to Skills
+      .to(groupRef.current.position, { x: -2, y: -2, z: -5, ease: "none" }, 0.25)
+      .to(groupRef.current.rotation, { x: 1, y: 3, ease: "none" }, 0.25)
+    // Skills to Projects
+      .to(groupRef.current.position, { x: 0, y: -1, z: -8, ease: "none" }, 0.5)
+      .to(groupRef.current.rotation, { x: 0.2, y: 4.5, ease: "none" }, 0.5)
+    // Projects to Achievements
+      .to(groupRef.current.position, { x: 1.5, y: -0.5, z: -6, ease: "none" }, 0.75)
+    // Achievements to Contact
+      .to(groupRef.current.position, { x: 0, y: 0, z: -4, ease: "none" }, 0.9)
+      .to(groupRef.current.rotation, { x: 0, y: Math.PI * 2, ease: "none" }, 0.9);
+
+    return () => {
+      tl.kill();
+    };
+  }, []);
+
+  useFrame((state, delta) => {
+    if (outerRingRef.current) {
+      outerRingRef.current.rotation.x += delta * 0.1;
+      outerRingRef.current.rotation.y += delta * 0.2;
+    }
+    if (innerMineralRef.current) {
+      innerMineralRef.current.rotation.y -= delta * 0.05;
+      innerMineralRef.current.rotation.z -= delta * 0.05;
+    }
+    if (groupRef.current) {
+      // Subtle mouse parallax
+      const targetX = (state.pointer.x * Math.PI) / 10;
+      const targetY = (state.pointer.y * Math.PI) / 10;
+      groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, groupRef.current.rotation.y + targetX, 0.01);
+      groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, groupRef.current.rotation.x + targetY, 0.01);
+    }
+  });
+
+  return (
+    <group ref={groupRef} position={[4, 0, 0]}>
+      <Float speed={1} rotationIntensity={0.2} floatIntensity={0.2}>
+        {/* Core Mineral */}
+        <mesh ref={innerMineralRef}>
+          <icosahedronGeometry args={[2, 1]} />
+          <MeshDistortMaterial
+            color="#14211a"
+            envMapIntensity={1}
+            clearcoat={0.8}
+            clearcoatRoughness={0.2}
+            metalness={0.8}
+            roughness={0.2}
+            distort={0.3}
+            speed={1}
+          />
+        </mesh>
+
+        {/* Angular Fragments */}
+        <mesh position={[1, 1, 1]} rotation={[0.5, 0.5, 0]}>
+          <boxGeometry args={[0.8, 0.8, 0.8]} />
+          <meshStandardMaterial color="#2c4435" metalness={0.5} roughness={0.5} />
+        </mesh>
+        
+        <mesh position={[-1.5, -0.5, 0.5]} rotation={[0.2, -0.5, 0.8]}>
+          <octahedronGeometry args={[0.6]} />
+          <meshStandardMaterial color="#0d1611" metalness={0.9} roughness={0.1} />
+        </mesh>
+
+        {/* Metallic Rings */}
+        <mesh ref={outerRingRef}>
+          <torusGeometry args={[2.8, 0.02, 16, 100]} />
+          <meshStandardMaterial color="#b5a642" metalness={1} roughness={0.2} />
+        </mesh>
+        
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[2.5, 0.01, 16, 100]} />
+          <meshStandardMaterial color="#3c5d48" metalness={0.8} roughness={0.4} />
+        </mesh>
+      </Float>
+    </group>
+  );
+}
+
+export default function BackgroundScene() {
+  return (
+    <div className="fixed inset-0 z-0 pointer-events-none bg-grain">
+      <Canvas
+        camera={{ position: [0, 0, 10], fov: 45 }}
+        gl={{ antialias: true, alpha: true }}
+        dpr={[1, 2]} // Optimize for performance but support retina
+      >
+        <ambientLight intensity={0.2} />
+        <directionalLight position={[10, 10, 5]} intensity={1} color="#ffffff" />
+        <directionalLight position={[-10, -10, -5]} intensity={0.5} color="#10b981" />
+        
+        <MineralSculpture />
+        
+        <Environment preset="city" />
+      </Canvas>
+    </div>
+  );
+}

@@ -1,0 +1,61 @@
+const fs = require('fs');
+const readline = require('readline');
+const path = require('path');
+
+const transcriptPath = 'C:\\Users\\avira\\.gemini\\antigravity-ide\\brain\\6877ce96-9b6f-4f13-8931-9130ee99a8e9\\.system_generated\\logs\\transcript_full.jsonl';
+const targetDir = 'C:\\Users\\avira\\OneDrive\\Desktop\\portfolio conts\\recovered';
+
+if (!fs.existsSync(targetDir)) {
+  fs.mkdirSync(targetDir);
+}
+
+const fileHistory = {};
+
+async function processLineByLine() {
+  const fileStream = fs.createReadStream(transcriptPath);
+
+  const rl = readline.createInterface({
+    input: fileStream,
+    crlfDelay: Infinity
+  });
+
+  for await (const line of rl) {
+    try {
+      const step = JSON.parse(line);
+      if (step.tool_calls && step.tool_calls.length > 0) {
+        for (const tc of step.tool_calls) {
+          if (tc.tool_name === 'default_api:write_to_file' || tc.tool_name === 'write_to_file' || tc.tool_name === 'default_api:multi_replace_file_content') {
+            const args = tc.tool_arguments;
+            if (args && args.TargetFile) {
+              // We only want the ones in the workspace
+              if (args.TargetFile.includes('portfolio conts')) {
+                const basename = path.basename(args.TargetFile);
+                if (!fileHistory[basename]) {
+                  fileHistory[basename] = [];
+                }
+                fileHistory[basename].push(args);
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // ignore JSON errors
+    }
+  }
+
+  // Dump the files. We want the version BEFORE the "Unreal" redesign.
+  // The "Unreal" redesign started at index X. Since there are only a few writes in the Unreal redesign,
+  // we can just take the second to last write, or the last write before a certain timestamp.
+  // I will just dump ALL versions of each file so I can manually select or just pick the second to last.
+  for (const [basename, versions] of Object.entries(fileHistory)) {
+    console.log(`File: ${basename}, versions: ${versions.length}`);
+    for (let i = 0; i < versions.length; i++) {
+       const v = versions[i];
+       const outPath = path.join(targetDir, `${basename}.v${i}`);
+       fs.writeFileSync(outPath, v.CodeContent ? v.CodeContent : JSON.stringify(v));
+    }
+  }
+}
+
+processLineByLine();
